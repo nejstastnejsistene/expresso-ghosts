@@ -7,6 +7,8 @@ import sys
 import requests
 
 
+usage = 'Usage: {} [-al] <ExpressoId> <Password>'
+
 base_url = 'http://www.expresso.net'
 login_url = base_url + '/Account/Login'
 ghosts_url = base_url + '/Rider/Ghost'
@@ -68,9 +70,45 @@ def update_ghost(url):
 
 
 if __name__ == '__main__':
-    local = True
-    all_time = True
-    _, expresso_id, password = sys.argv
+    usage = usage.format(sys.argv[0])
+
+    # Process command arguments. (ugly as sin)
+    if len(sys.argv) < 3:
+        print usage
+        sys.exit(2)
+    expresso_id, password = sys.argv[-2:]
+    all_time = False
+    local = False
+    error = False
+    for arg in sys.argv[1:-2]:
+        if arg.startswith('--'):
+            if arg == '--all-time':
+                if all_time:
+                    error = True
+                all_time = True
+            elif arg == '--local':
+                if local:
+                    error = True
+                local = True
+            else:
+                error = True
+        elif arg.startswith('-'):
+            for flag in arg[1:]:
+                if flag == 'a':
+                    if all_time:
+                        error = True
+                    all_time = True
+                elif flag == 'l':
+                    if local:
+                        error = True
+                    all_time = True
+                else:
+                    error = True
+        else:
+            error = True
+    if error:
+        print usage
+        sys.exit(2)
 
     # Attempt to login.
     payload = {
