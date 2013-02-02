@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import multiprocessing
 import re
 import sys
 
@@ -122,11 +121,5 @@ if __name__ == '__main__':
 
     # Search for links to change ghosts.
     ghosts_page = requests.get(ghosts_url, cookies=cookies).text
-    urls = find_links('Change', ghosts_page)
-
-    # Update ghosts asynchronously.
-    pool = multiprocessing.Pool()
-    pool.map_async(update_ghost, urls)
-    pool.close()
-    pool.join()
-    
+    for url in find_links('Change', ghosts_page)
+        update_ghost(url)
