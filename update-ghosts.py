@@ -16,6 +16,8 @@ usage = '''Usage: {} [options] <ExpressoId> <Password>
 base_url = 'http://www.expresso.net'
 login_url = base_url + '/Account/Login'
 ghosts_url = base_url + '/Rider/Ghost'
+leaderboard_url = base_url + '/Rider/Leaderboard/Details/{}' + \
+                             '?leaderBoardLocation={}'
 
 
 # Searches for links with the given name.
@@ -41,12 +43,12 @@ def find_challenge_url(html):
 
 
 # Updates a ghost given it's change url.
-def update_ghost(url):
+def update_ghost(course_id):
     global cookies, all_time, local
 
     # Retrieve the leaderboard.
-    html = requests.get(url, cookies=cookies).text
-    url = find_links('My Facility' if local else 'Global', html)[0]
+    url = leaderboard_url.format(
+            course_id, 'Local' if local else 'Global')
     if all_time:
         url += '&seasonId=1'
     leaderboard = requests.get(url, cookies=cookies).text
@@ -105,7 +107,7 @@ if __name__ == '__main__':
                 elif flag == 'l':
                     if local:
                         error = True
-                    all_time = True
+                    local = True
                 else:
                     error = True
         else:
@@ -127,4 +129,5 @@ if __name__ == '__main__':
     # Search for links to change ghosts.
     ghosts_page = requests.get(ghosts_url, cookies=cookies).text
     for url in find_links('Change', ghosts_page):
-        update_ghost(url)
+        course_id = url.split('/')[-1]
+        update_ghost(course_id)
