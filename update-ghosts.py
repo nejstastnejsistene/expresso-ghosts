@@ -6,7 +6,12 @@ import sys
 import requests
 
 
-usage = 'Usage: {} [-al] <ExpressoId> <Password>'
+usage = '''Usage: {} [options] <ExpressoId> <Password>
+
+    Options:
+    -a --all-time   Take into account all results rather than only
+                    those from the current season.
+    -l --local      Only include results from your local facility.'''
 
 base_url = 'http://www.expresso.net'
 login_url = base_url + '/Account/Login'
@@ -121,5 +126,5 @@ if __name__ == '__main__':
 
     # Search for links to change ghosts.
     ghosts_page = requests.get(ghosts_url, cookies=cookies).text
-    for url in find_links('Change', ghosts_page)
+    for url in find_links('Change', ghosts_page):
         update_ghost(url)
