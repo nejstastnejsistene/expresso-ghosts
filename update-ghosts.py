@@ -48,7 +48,7 @@ def update_ghost(course_id):
 
     # Retrieve the leaderboard.
     url = leaderboard_url.format(
-            course_id, 'Local' if local else 'Global')
+            course_id, 'Local' if local else 'Global&page=1')
     if all_time:
         url += '&seasonId=1'
     leaderboard = requests.get(url, cookies=cookies).text
