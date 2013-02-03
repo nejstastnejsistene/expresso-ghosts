@@ -35,7 +35,12 @@ def find_leaderboard_title(html):
 def find_first_place(html):
     pattern = r'1\s*</td>\s*<td[^>]*>\s*<a href="([^"]+)">([^>]*)</a>'
     first = re.findall(pattern, html)
-    return first[0] if first else None
+    if first:
+        url = base_url + first[0][0]
+        name = first[0][1]
+        return url, name
+    else:
+        return None
 
 # Finds the link to challenge a ghost.
 def find_challenge_url(html):
@@ -63,15 +68,14 @@ def update_ghost(course_id):
         print 'No ghosts -- the leaderboard is empty!'
     else:
         ghost_url, name = first_place
-        if '(Ghost)' in name or '(You)' in name:
+        # Navigate to the ghost's page.
+        ghost_info = requests.get(ghost_url, cookies=cookies).text
+        # Actually change the ghost.
+        challenge_url = find_challenge_url(ghost_info)
+        if challenge_url is None:
             mesg = 'Ghost is up to date:'
         else:
-            # Navigate to the ghost's page.
-            ghost_url = base_url + ghost_url
-            ghost_info = requests.get(ghost_url, cookies=cookies).text
-            # Actually change the ghost.
-            challenge_url = find_challenge_url(ghost_info)
-            requests.post(challenge_url, headers= \
+            requests.post(challenge_url, headers = \
                     { 'content-length': '0' }, cookies=cookies).text
             mesg = 'Ghost changed to:'
         print '{} {}'.format(mesg.ljust(20), name)
