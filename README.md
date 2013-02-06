@@ -10,4 +10,4 @@ via the leaderboard.
 ## Options
     -a --all-time   Take into account all results rather than only
                     those from the current season.
-     l --local      Only include results from your local facility.
+    -l --local      Only include results from your local facility.
