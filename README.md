@@ -11,3 +11,5 @@ via the leaderboard.
     -a --all-time   Take into account all results rather than only
                     those from the current season.
     -l --local      Only include results from your local facility.
+    -v --verbose    Print the state of all ghosts, not just the ones
+                    that have changed.

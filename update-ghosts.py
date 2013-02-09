@@ -11,7 +11,9 @@ usage = '''Usage: {} [options] <ExpressoId> <Password>
     Options:
     -a --all-time   Take into account all results rather than only
                     those from the current season.
-    -l --local      Only include results from your local facility.'''
+    -l --local      Only include results from your local facility.
+    -v --verbose    Print the state of all ghosts, not just the ones
+                    that have changed.'''
 
 base_url = 'http://www.expresso.net'
 login_url = base_url + '/Account/Login'
@@ -51,7 +53,7 @@ def find_challenge_url(html):
 
 # Updates a ghost given it's change url.
 def update_ghost(course_id):
-    global cookies, all_time, local
+    global cookies, all_time, local, verbose
 
     # Retrieve the leaderboard.
     url = leaderboard_url.format(
@@ -78,7 +80,8 @@ def update_ghost(course_id):
             requests.post(challenge_url, headers = \
                     { 'content-length': '0' }, cookies=cookies).text
             mesg = 'Ghost changed to:'
-        print '{} {}'.format(mesg.ljust(20), name)
+        if verbose or 'changed' in mesg:
+            print '{} {}'.format(mesg.ljust(20), name)
 
 
 if __name__ == '__main__':
@@ -91,29 +94,32 @@ if __name__ == '__main__':
     expresso_id, password = sys.argv[-2:]
     all_time = False
     local = False
+    verbose = False
     error = False
     for arg in sys.argv[1:-2]:
         if arg.startswith('--'):
             if arg == '--all-time':
-                if all_time:
-                    error = True
+                if all_time: error = True
                 all_time = True
             elif arg == '--local':
-                if local:
-                    error = True
+                if local: error = True
                 local = True
+            elif arg == '--verbose':
+                if verbose: error = True
+                verbose = True
             else:
                 error = True
         elif arg.startswith('-'):
             for flag in arg[1:]:
                 if flag == 'a':
-                    if all_time:
-                        error = True
+                    if all_time: error = True
                     all_time = True
                 elif flag == 'l':
-                    if local:
-                        error = True
+                    if local: error = True
                     local = True
+                elif flag == 'v':
+                    if verbose: error = True
+                    verbose = True
                 else:
                     error = True
         else:
