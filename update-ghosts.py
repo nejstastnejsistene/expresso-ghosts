@@ -67,7 +67,8 @@ def update_ghost(course_id):
     first_place =  find_first_place(leaderboard)
     label = '{} Leaderboard:'.format(title).ljust(32)
     if not first_place:
-        print 'No ghosts -- the leaderboard is empty!'
+        if verbose:
+            print 'No ghosts -- the leaderboard is empty!'
     else:
         ghost_url, name = first_place
         # Navigate to the ghost's page.
@@ -79,7 +80,7 @@ def update_ghost(course_id):
         else:
             requests.post(challenge_url, headers = \
                     { 'content-length': '0' }, cookies=cookies).text
-            mesg += 'Ghost changed to:'
+            mesg = 'Ghost changed to:'
         if verbose or 'changed' in mesg:
             print '{} {} {}'.format(label, mesg.ljust(20), name)
 
